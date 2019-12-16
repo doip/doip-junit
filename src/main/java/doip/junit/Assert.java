@@ -25,7 +25,7 @@ public class Assert {
 		}
 	}
 	
-	public static void asserArrayEquals(byte[] expecteds, byte[] actuals) {
+	public static void assertArrayEquals(byte[] expecteds, byte[] actuals) {
 		try {
 			org.junit.Assert.assertArrayEquals(expecteds, actuals);
 		} catch (AssertionError e) {
@@ -34,7 +34,7 @@ public class Assert {
 		}
 	}
 	
-	public static void asserArrayEquals(String message, byte[] expecteds, byte[] actuals) {
+	public static void assertArrayEquals(String message, byte[] expecteds, byte[] actuals) {
 		try {
 			org.junit.Assert.assertArrayEquals(message, expecteds, actuals);
 		} catch (AssertionError e) {
