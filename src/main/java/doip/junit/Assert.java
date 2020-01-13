@@ -97,6 +97,24 @@ public class Assert {
 		}
 	}
 	
+	public static void assertNull(Object obj) {
+		try {
+			org.junit.Assert.assertNull(obj);
+		} catch (AssertionError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
+	public static void assertNull(String message, Object obj) {
+		try {
+			org.junit.Assert.assertNull(message, obj);
+		} catch (AssertionError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
 	private static String getExceptionAsString(Throwable e) {
 		String s = "";
 		String message = e.getMessage();
