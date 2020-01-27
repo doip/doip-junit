@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'eclipse'
 
 group = "com.github.doip"
-version = "1.0.8"
+version = "1.0.9"
 
 repositories {
 	jcenter()
@@ -11,6 +11,6 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.github.doip:doip-logging:1.1.5'
+	implementation 'com.github.doip:doip-logging:1.1.7'
 	implementation 'junit:junit:4.12'
 }
