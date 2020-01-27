@@ -114,20 +114,28 @@ public class Assert {
 			throw e;
 		}
 	}
-	
+
+	/**
+	 * Returns an exception including its stack trace as string.
+	 * @param e The exception
+	 * @return The exception as string
+	 */
 	private static String getExceptionAsString(Throwable e) {
-		String s = "";
+		StringBuilder s = new StringBuilder(4096);
 		String message = e.getMessage();
 		if (message != null) {
-			s += message;
+			s.append(message);
 		}
-		s += "\n";
-		s += e.getClass().getName() + "\n";
+		s.append("\n");
+		s.append(e.getClass().getName());
+		s.append("\n");
 		StackTraceElement[] elements = e.getStackTrace();
 		for (StackTraceElement element : elements) {
-			s += "    " + element + "\n";
+			s.append("    ");
+			s.append(element);
+			s.append("\n");
 		}
-		return s;
+		return s.toString();
 		
 	}
 }
