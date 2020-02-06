@@ -114,7 +114,43 @@ public class Assert {
 			throw e;
 		}
 	}
-
+	
+	public static void assertEquals(boolean expected, boolean actual) {
+		try {
+			org.junit.Assert.assertEquals(expected, actual);
+		} catch (AssertionError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
+	public static void assertEquals(String message, boolean expected, boolean actual) {
+		try {
+			org.junit.Assert.assertEquals(message, expected, actual);
+		} catch (AssertionError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
+	public static void fail() {
+		try {
+			org.junit.Assert.fail();
+		} catch (AssertionError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
+	public static void fail(String message) {
+		try {
+			org.junit.Assert.fail(message);
+		} catch (AssertionError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
 	/**
 	 * Returns an exception including its stack trace as string.
 	 * @param e The exception
