@@ -25,6 +25,24 @@ public class Assert {
 		}
 	}
 	
+	public static void assertFalse(boolean condition) {
+		try {
+			org.junit.Assert.assertFalse(condition);
+		}  catch (AssertionError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
+	public static void assertFalse(String message, boolean condition) {
+		try {
+			org.junit.Assert.assertFalse(message, condition);
+		}  catch (AssertionError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
 	public static void assertEquals(String expected, String actual) {
 		try {
 			org.junit.Assert.assertEquals(expected, actual);
