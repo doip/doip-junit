@@ -1,5 +1,6 @@
 package doip.junit;
 
+import org.junit.jupiter.api.function.Executable;
 import org.opentest4j.AssertionFailedError;
 
 import doip.logging.LogManager;
@@ -147,6 +148,16 @@ public class Assertions {
 	public static void assertEquals(boolean expected, boolean actual, String message) {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
+		} catch (AssertionFailedError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
+	public static <T extends Throwable> T assertThrows(Class<T> expectedType, Executable executable) {
+		//return AssertThrows.assertThrows(expectedType, executable);
+		try {
+			return org.junit.jupiter.api.Assertions.assertThrows(expectedType, executable);
 		} catch (AssertionFailedError e) {
 			logger.error(getExceptionAsString(e));
 			throw e;
