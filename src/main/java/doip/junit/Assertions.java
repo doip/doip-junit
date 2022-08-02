@@ -155,7 +155,6 @@ public class Assertions {
 	}
 	
 	public static <T extends Throwable> T assertThrows(Class<T> expectedType, Executable executable) {
-		//return AssertThrows.assertThrows(expectedType, executable);
 		try {
 			return org.junit.jupiter.api.Assertions.assertThrows(expectedType, executable);
 		} catch (AssertionFailedError e) {
@@ -163,19 +162,30 @@ public class Assertions {
 			throw e;
 		}
 	}
-
-	public static void fail() {
+	
+	
+	public static <T extends Throwable> T assertThrows(Class<T> expectedType, Executable executable, String message) {
 		try {
-			org.junit.jupiter.api.Assertions.fail();
+			return org.junit.jupiter.api.Assertions.assertThrows(expectedType, executable, message);
+		} catch (AssertionFailedError e) {
+			logger.error(getExceptionAsString(e));
+			throw e;
+		}
+	}
+	
+
+	public static <V> V fail() {
+		try {
+			return org.junit.jupiter.api.Assertions.fail();
 		} catch (AssertionFailedError e) {
 			logger.error(getExceptionAsString(e));
 			throw e;
 		}
 	}
 
-	public static void fail(String message) {
+	public static <V> V fail(String message) {
 		try {
-			org.junit.jupiter.api.Assertions.fail(message);
+			return org.junit.jupiter.api.Assertions.fail(message);
 		}
 		 catch (AssertionFailedError e) {
 			logger.error(getExceptionAsString(e));

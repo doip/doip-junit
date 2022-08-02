@@ -1,11 +1,18 @@
 package doip.junit;
 
+import doip.logging.LogManager;
+import doip.logging.Logger;
+
 public class TestCaseDescription {
 
 	private String id;
 	private String description;
 	private String action;
 	private String expectedResult;
+	
+	private boolean emphasize = false;
+
+	private static Logger logger = LogManager.getLogger(TestCaseDescription.class);
 	
 	public TestCaseDescription(String id, String description, String action, String expectedResult) {
 		this.id = id;
@@ -14,14 +21,42 @@ public class TestCaseDescription {
 		this.expectedResult = expectedResult;
 	}
 	
+	/**
+	 * Returns the test case description in a multi-line string. The string itself does not
+	 * begin with a new line character and also doesn't stop with a new line character.
+	 */
 	public String toString() {
-		return   "=========================================================================" +
-			   "\nTest case ID:    " + id +
-			   "\n=========================================================================" +
-			   "\nDescription:\n    " + wrap(description, 24, "    ") +
-			   "\nAction:\n    " + wrap(action, 24, "    ") +
-			   "\nExpected result:\n    " + wrap(expectedResult, 24, "    ") +
-			   "\n=========================================================================";
+		if (emphasize) {
+			return   "##############################################################################" +
+				   "\nTest case ID:    " + id +
+				   "\n##############################################################################" +
+				   "\nDescription:\n    " + wrap(description, 80, "    ") +
+				   "\nAction:\n    " + wrap(action, 80, "    ") +
+				   "\nExpected result:\n    " + wrap(expectedResult, 80, "    ") +
+				   "\n##############################################################################";
+			
+		} else {
+			return   "==============================================================================" +
+				   "\nTest case ID:    " + id +
+				   "\n==============================================================================" +
+				   "\nDescription:\n    " + wrap(description, 80, "    ") +
+				   "\nAction:\n    " + wrap(action, 80, "    ") +
+				   "\nExpected result:\n    " + wrap(expectedResult, 80, "    ") +
+				   "\n==============================================================================";
+		}
+	}
+	
+	/**
+	 * Logs the test case as level "info" 
+	 */
+	public void log() {
+		logger.info("\n" + this.toString());
+	}
+	
+	
+	public TestCaseDescription emphasize() {
+		this.emphasize = true;
+		return this;
 	}
 	
 	/**
