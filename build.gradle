@@ -2,7 +2,7 @@ apply plugin: 'java-library'
 apply plugin: 'jacoco'
 apply plugin: 'eclipse'
 
- group = "com.github.doip"
+group = "com.github.doip"
 version = "1.1.5"
 
 repositories {
@@ -15,6 +15,14 @@ dependencies {
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-core',       version: '2.19.0'
 	implementation 'com.github.doip:doip-logging:1.2.2'
 	implementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+}
+
+jar {
+	manifest {
+		attributes (
+			'Class-Path' : configurations.runtimeClasspath.collect { it.getName() }.join(' ')
+		)
+	}
 }
 
 test {
