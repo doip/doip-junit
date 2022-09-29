@@ -1,16 +1,25 @@
 package doip.junit;
 
-import doip.logging.LogManager;
-import doip.logging.Logger;
+import java.util.Arrays;
+import java.util.Iterator;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class TestCaseDescription {
 
+	// Strings are 78 characters long
+	public static final String SINGLE_LINE = "------------------------------------------------------------------------------";
+	public static final String DOUBLE_LINE = "==============================================================================";
+	public static final String HASH_LINE   = "##############################################################################";
+	
 	private String id;
 	private String description;
 	private String action;
 	private String expectedResult;
-	
-	private boolean emphasize = false;
+	private String additionalInfo;
+	private int maxLength = 78;
+	private String separator = DOUBLE_LINE;
 
 	private static Logger logger = LogManager.getLogger(TestCaseDescription.class);
 	
@@ -19,43 +28,75 @@ public class TestCaseDescription {
 		this.description = description;
 		this.action = action;
 		this.expectedResult = expectedResult;
+		this.additionalInfo = null;
+	}
+
+	public TestCaseDescription(String id, String description, String action, String expectedResult, String additionalInfo) {
+		this.id = id;
+		this.description = description;
+		this.action = action;
+		this.expectedResult = expectedResult;
+		this.additionalInfo = additionalInfo;
+	}
+	
+	public void setAdditionalInfo(String info) {
+		this.additionalInfo = info;
+	}
+
+	public String getSeparator() {
+		return this.separator;
 	}
 	
 	/**
-	 * Returns the test case description in a multi-line string. The string itself does not
-	 * begin with a new line character and also doesn't stop with a new line character.
+	 * Returns the test case description 
 	 */
 	public String toString() {
-		if (emphasize) {
-			return   "##############################################################################" +
+		String string;
+		string =     separator +
 				   "\nTest case ID:    " + id +
-				   "\n##############################################################################" +
-				   "\nDescription:\n    " + wrap(description, 80, "    ") +
-				   "\nAction:\n    " + wrap(action, 80, "    ") +
-				   "\nExpected result:\n    " + wrap(expectedResult, 80, "    ") +
-				   "\n##############################################################################";
-			
-		} else {
-			return   "==============================================================================" +
-				   "\nTest case ID:    " + id +
-				   "\n==============================================================================" +
-				   "\nDescription:\n    " + wrap(description, 80, "    ") +
-				   "\nAction:\n    " + wrap(action, 80, "    ") +
-				   "\nExpected result:\n    " + wrap(expectedResult, 80, "    ") +
-				   "\n==============================================================================";
+				   "\n" + separator +
+				   "\nDescription:\n    " + formatSection(description, maxLength - 4, "    ") +
+				   "\nAction:\n    " + formatSection(action, maxLength - 4, "    ") +
+				   "\nExpected result:\n    " + formatSection(expectedResult, maxLength -4 , "    ") +
+				   "\n" + separator;
+		
+		if (this.additionalInfo != null) {
+			string += "\n" + formatSection(this.additionalInfo, maxLength, "")
+			 + "\n" + separator;
 		}
+		return string;
 	}
 	
 	/**
 	 * Logs the test case as level "info" 
 	 */
-	public void log() {
-		logger.info("\n" + this.toString());
+	public void logHeader() {
+		String[] lines = this.toString().split("\n");
+		for (String line: lines) {
+			logger.info(line);
+		}
+	}
+	
+	public void logFooter(TestResult result) {
+		logger.info(getSeparator());
+		switch (result) {
+		case PASSED:
+			logger.info("TEST " + result);
+			break;
+		case FAILED:
+		case ERROR:
+			logger.error("TEST " + result);
+			break;
+		default:
+			logger.fatal("TEST " + result);
+			break;
+		}
+		logger.info(getSeparator());
 	}
 	
 	
 	public TestCaseDescription emphasize() {
-		this.emphasize = true;
+		this.separator = HASH_LINE;
 		return this;
 	}
 	
@@ -65,27 +106,57 @@ public class TestCaseDescription {
 	 * @param text The text which shall get wrapped
 	 * @param limit The maximum number of characters in one line
 	 * @param indent Gives an indent which will be added at the beginning
-	 * 		of the next line
+	 * 		of the next lines
 	 * @return The wrapped text
 	 */
-	public static String wrap(String text, int limit, String indent) {
-		String result = "";
+	public String formatParagraph(String paragraph, int limit, String indent) {
+		StringBuilder returnString = new StringBuilder(4096);
 		String line = "";
-	
-		String[] words = text.split("\\s+");
+		String[] words = paragraph.split("\\s+");
 		
-		for (int i = 0; i < words.length; i++) {
-			if (line.length() + words[i].length() > limit) {
-				result += line + "\n" + indent;
-				line = words[i];
+		Iterator<String> iter = Arrays.asList(words).iterator();
+		while (iter.hasNext()) {
+			String word = iter.next();
+			if (line.length() + word.length() > limit) {
+				// Not enough space
+				returnString.append(line);
+				returnString.append("\n");
+				returnString.append(indent);
+				line = word;
 			} else {
-				// There is enough space to add our word
-				if (line.length() > 0) line +=  " ";
-				line += words[i];
+				// Enough space
+				if (line.length() > 0 && !line.matches("\\s+")) line +=  " ";
+				line += word;
 			}
 		}
-		result += line;
+		returnString.append(line);
+		return returnString.toString();
+	}
+	
+	/**
+	 * It will take a String as input which constist of multiple
+	 * paragraphs. 
+	 * @param text
+	 * @param limit Maximum number of characters in a line
+	 * @param indent Indentation if required
+	 * @return
+	 */
+	public String formatSection(String text, int limit, String indent) {
+		StringBuilder returnString = new StringBuilder(4096);
 		
-		return result;
+		String[] paragraphs = text.split("\n");
+		
+		Iterator<String> iter = Arrays.asList(paragraphs).iterator();
+		while (iter.hasNext()) {
+			String paragraph = iter.next();
+			String formattedParagraph = formatParagraph(paragraph, limit, indent);
+			returnString.append(formattedParagraph);
+			if (iter.hasNext()) {
+				returnString.append('\n');
+				returnString.append(indent);
+			}
+		}
+		
+		return returnString.toString();
 	}
 }
