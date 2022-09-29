@@ -4,4 +4,4 @@
 .classpath
 .project
 .settings
-doip-simulation.log
+*.log
