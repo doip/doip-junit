@@ -1,61 +1,69 @@
 package doip.junit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import doip.logging.LogManager;
-import doip.logging.Logger;
-
-class TestTestCaseDescription {
+/**
+ * Testing the class TestCaseDescription. It doesn't really test the class,
+ * it is more a demonstration how this class can be used to create some
+ * nice logging with a description of the test case.
+ */
+public class TestTestCaseDescription {
 	
-
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-	}
-
-	@BeforeEach
-	void setUp() throws Exception {
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
-	}
-
-	@Test
-	void test() {
-		String text = "Here are  some    words \t\t for test";
-		String[] words = text.split("\\s+");
-		Assertions.assertEquals("Here", words[0]);
-		Assertions.assertEquals("are", words[1]);
-		Assertions.assertEquals("some", words[2]);
-		Assertions.assertEquals("words", words[3]);
-		Assertions.assertEquals("for", words[4]);
-		Assertions.assertEquals("test", words[5]);
-	}
+	private static Logger logger = LogManager.getLogger(TestTestCaseDescription.class);
 	
 	@Test
-	public void testTestCaseDescription() {
-		TestCaseDescription tc = new TestCaseDescription(
-				"TC0001", 
-				"Just testing how good this automatic text wrapping works", null, null);
+	public void test() {
+		TestCaseDescription desc = new TestCaseDescription(
+				"TC-0001-01",
+				"Just show the usage of class TestCaseDescription."
+						+ " This here is just a sentence to show that"
+						+ " there is an automatic line break when the message"
+						+ " just gets too long.\n1. First step\n2. Second step"
+				,
+				"Create instance of class TestCaseDescription and log a few messages",
+				"The output from Log4j shows the log messages",
+				"Here we can add some additional information about the test case."
+						+ " The implementation will write 6 log messages with log level"
+						+ " from TRACE to FATAL. You might not see all message due to"
+						+ " configuration of Log4j."
+						+ " Now also several paragraphs can be created.\n"
+						+ "1. logger.trace(...)\n"
+						+ "2. logger.debug(...)\n"
+						+ "3. logger.info(...)\n"
+						+ "...\n"
+						+ "6. logger.fatal(...)\n\n"
+						+ "Some more information"
+						);
+		desc.logHeader();
+		logger.trace("This is a log message with log level TRACE");
+		logger.debug("This is a log message with log level DEBUG");
+		logger.info ("This is a log message with log level INFO");
+		logger.warn ("This is a log message with log level WARN");
+		logger.error("This is a log message with log level ERROR");
+		logger.fatal("This is a log message with log level FATAL");
+		desc.logFooter(TestResult.PASSED);
 	}
 	
 	@Test
-	public void wrap1() {
-		String text = "This is a long sentence with a lot of words which must be wrapped, otherwise we can't read the whole sentence because it is too long. 1234567890123456789012345678901234567890";
-		System.out.println("-------------------------------");
-		System.out.println(TestCaseDescription.wrap(text, 36, "  "));
-		System.out.println("-------------------------------");
+	public void testFormat1() {
+		TestCaseDescription desc = new TestCaseDescription("","","","");
+		String text = desc.formatSection("1234 1234 1234", 10, "");
+		assertEquals("1234 1234\n1234", text);
 	}
 	
-	
+	@Test
+	public void testFormat2() {
+		try {
+			TestCaseDescription desc = new TestCaseDescription("","","","");
+			String text = desc.formatSection("1234\n1234\n1234", 10, "");
+			assertEquals("1234\n1234\n1234", text);
+		} finally {
+		}
+		
+	}
 }
