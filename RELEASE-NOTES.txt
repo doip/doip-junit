@@ -23,8 +23,8 @@ CHANGES
 
 - Issue #8:     Update to gradle 8.1.1, update dependencies, removed
                 dependency to doip-logging, instaed we use here directly
-				log4j2. The old exceptions had been replaced by
-				InitializationError and TestExecutionError.
-				TestCaseDescription has been updated.
+                log4j2. The old exceptions had been replaced by
+                InitializationError and TestExecutionError.
+                TestCaseDescription has been updated.
 
 ==============================================================================
